@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manage Bookings - AutoRent Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a href="dashboard.html" class="text-2xl font-bold text-blue-600"
+          >AutoRent Admin</a
+        >
+        <button id="logoutBtn" class="text-gray-700 hover:text-red-600">
+          Logout
+        </button>
+      </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-10 flex-grow">
+      <h1 class="text-3xl font-bold mb-8">Manage Bookings</h1>
+
+      <table
+        class="w-full table-auto border-collapse border border-gray-300 bg-white rounded shadow"
+      >
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border border-gray-300 p-2 text-left">Booking ID</th>
+            <th class="border border-gray-300 p-2 text-left">User</th>
+            <th class="border border-gray-300 p-2 text-left">Car</th>
+            <th class="border border-gray-300 p-2 text-left">Pickup Date</th>
+            <th class="border border-gray-300 p-2 text-left">Return Date</th>
+            <th class="border border-gray-300 p-2 text-left">Total Price</th>
+            <th class="border border-gray-300 p-2 text-center">Status</th>
+            <th class="border border-gray-300 p-2 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookingsTableBody">
+          <!-- Rows inserted by JS -->
+        </tbody>
+      </table>
+    </main>
+
+    <script>
+      // Mock booking data
+      let bookings = [
+        {
+          id: 101,
+          user: "John Doe",
+          car: "Toyota Corolla",
+          pickup: "2025-08-10",
+          return: "2025-08-12",
+          totalPrice: 150,
+          status: "Pending",
+        },
+        {
+          id: 102,
+          user: "Alice Smith",
+          car: "BMW X5",
+          pickup: "2025-08-15",
+          return: "2025-08-18",
+          totalPrice: 480,
+          status: "Approved",
+        },
+        {
+          id: 103,
+          user: "Bob Johnson",
+          car: "Honda Civic",
+          pickup: "2025-08-20",
+          return: "2025-08-22",
+          totalPrice: 180,
+          status: "Cancelled",
+        },
+      ];
+
+      const bookingsTableBody = document.getElementById("bookingsTableBody");
+
+      function renderBookings() {
+        bookingsTableBody.innerHTML = "";
+
+        bookings.forEach((b) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+          <td class="border border-gray-300 p-2">${b.id}</td>
+          <td class="border border-gray-300 p-2">${b.user}</td>
+          <td class="border border-gray-300 p-2">${b.car}</td>
+          <td class="border border-gray-300 p-2">${b.pickup}</td>
+          <td class="border border-gray-300 p-2">${b.return}</td>
+          <td class="border border-gray-300 p-2">₱${b.totalPrice}</td>
+          <td class="border border-gray-300 p-2 text-center">${b.status}</td>
+          <td class="border border-gray-300 p-2 text-center space-x-2">
+            ${
+              b.status === "Pending"
+                ? `
+              <button class="approveBtn text-green-600 hover:underline" data-id="${b.id}">Approve</button>
+              <button class="cancelBtn text-red-600 hover:underline" data-id="${b.id}">Cancel</button>
+            `
+                : "-"
+            }
+          </td>
+        `;
+          bookingsTableBody.appendChild(tr);
+        });
+
+        // Approve booking
+        document.querySelectorAll(".approveBtn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = parseInt(btn.getAttribute("data-id"));
+            const booking = bookings.find((b) => b.id === id);
+            if (booking) {
+              booking.status = "Approved";
+              renderBookings();
+            }
+          });
+        });
+
+        // Cancel booking
+        document.querySelectorAll(".cancelBtn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = parseInt(btn.getAttribute("data-id"));
+            const booking = bookings.find((b) => b.id === id);
+            if (booking) {
+              booking.status = "Cancelled";
+              renderBookings();
+            }
+          });
+        });
+      }
+
+      renderBookings();
+
+      // Logout button
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        alert("Logging out...");
+        // Clear admin token, redirect to login page
+      });
+    </script>
+  </body>
+</html>
