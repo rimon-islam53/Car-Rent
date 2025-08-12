@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Browse Cars - AutoRent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-bold text-blue-600">AutoRent</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="index.html" class="text-gray-700 hover:text-blue-600">Home</a>
+        <a href="cars.html" class="text-gray-700 hover:text-blue-600">Cars</a>
+        <a href="login.html" class="text-gray-700 hover:text-blue-600">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Filters & Cars List -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Available Cars</h1>
+
+    <!-- Filters -->
+    <div class="flex flex-col md:flex-row md:space-x-6 mb-8">
+      
+      <!-- Type Filter -->
+      <div class="mb-4 md:mb-0">
+        <label for="filterType" class="block font-semibold mb-1">Type</label>
+        <select id="filterType" class="border rounded p-2 w-48">
+          <option value="">All</option>
+          <option value="Sedan">Sedan</option>
+          <option value="SUV">SUV</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Truck">Truck</option>
+        </select>
+      </div>
+
+      <!-- Brand Filter -->
+      <div class="mb-4 md:mb-0">
+        <label for="filterBrand" class="block font-semibold mb-1">Brand</label>
+        <select id="filterBrand" class="border rounded p-2 w-48">
+          <option value="">All</option>
+          <option value="Toyota">Toyota</option>
+          <option value="Honda">Honda</option>
+          <option value="BMW">BMW</option>
+          <option value="Ford">Ford</option>
+        </select>
+      </div>
+
+      <!-- Price Filter -->
+      <div>
+        <label for="filterPrice" class="block font-semibold mb-1">Max Price Per Day</label>
+        <input type="number" id="filterPrice" class="border rounded p-2 w-48" placeholder="e.g. 100" min="0" />
+      </div>
+    </div>
+
+    <!-- Cars Grid -->
+    <div id="carsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Car cards will be inserted here by JS -->
+    </div>
+  </main>
+
+  <script>
+    // Sample car data
+    const cars = [
+      {
+        id: 1,
+        name: "Toyota Corolla",
+        brand: "Toyota",
+        type: "Sedan",
+        price_per_day: 50,
+        image: "assets/images/corolla.jpg"
+      },
+      {
+        id: 2,
+        name: "Honda Civic",
+        brand: "Honda",
+        type: "Sedan",
+        price_per_day: 60,
+        image: "assets/images/civic.jpg"
+      },
+      {
+        id: 3,
+        name: "BMW X5",
+        brand: "BMW",
+        type: "SUV",
+        price_per_day: 120,
+        image: "assets/images/bmw_x5.jpg"
+      },
+      {
+        id: 4,
+        name: "Ford Ranger",
+        brand: "Ford",
+        type: "Truck",
+        price_per_day: 80,
+        image: "assets/images/ford_ranger.jpg"
+      }
+    ];
+
+    // Function to display cars
+    function displayCars(list) {
+      const container = document.getElementById('carsGrid');
+      container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = '<p class="text-center col-span-full text-gray-600">No cars found matching your criteria.</p>';
+        return;
+      }
+      list.forEach(car => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow p-4';
+        card.innerHTML = `
+          <img src="${car.image}" alt="${car.name}" class="rounded-lg w-full h-40 object-cover" />
+          <h2 class="mt-4 text-xl font-semibold text-blue-600">${car.name}</h2>
+          <p class="text-gray-700">Brand: ${car.brand}</p>
+          <p class="text-gray-700">Type: ${car.type}</p>
+          <p class="mt-2 font-bold text-green-600">₱${car.price_per_day} / day</p>
+          <a href="car-details.html?id=${car.id}" class="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View Details</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Filter function
+    function filterCars() {
+      const type = document.getElementById('filterType').value;
+      const brand = document.getElementById('filterBrand').value;
+      const maxPrice = parseFloat(document.getElementById('filterPrice').value);
+
+      let filtered = cars.filter(car => {
+        let matches = true;
+        if (type && car.type !== type) matches = false;
+        if (brand && car.brand !== brand) matches = false;
+        if (!isNaN(maxPrice) && car.price_per_day > maxPrice) matches = false;
+        return matches;
+      });
+
+      displayCars(filtered);
+    }
+
+    // Event listeners on filters
+    document.getElementById('filterType').addEventListener('change', filterCars);
+    document.getElementById('filterBrand').addEventListener('change', filterCars);
+    document.getElementById('filterPrice').addEventListener('input', filterCars);
+
+    // Initial display
+    displayCars(cars);
+  </script>
+
+</body>
+</html>
