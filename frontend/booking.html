@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Book Car - AutoRent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+      <div
+        class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <a href="index.html" class="text-2xl font-bold text-blue-600"
+          >AutoRent</a
+        >
+        <div class="hidden md:flex space-x-6">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600"
+            >Home</a
+          >
+          <a href="cars.html" class="text-gray-700 hover:text-blue-600">Cars</a>
+          <a href="login.html" class="text-gray-700 hover:text-blue-600"
+            >Login</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="max-w-4xl mx-auto px-6 py-10 bg-white rounded-lg shadow-lg mt-10"
+    >
+      <h1 class="text-3xl font-bold mb-6">Book Your Car</h1>
+
+      <form id="bookingForm" class="space-y-6">
+        <!-- Car Info -->
+        <div id="carInfo" class="mb-6 p-4 bg-gray-100 rounded">
+          <h2 class="text-xl font-semibold" id="carName">
+            Loading car info...
+          </h2>
+          <p id="carPricePerDay"></p>
+        </div>
+
+        <!-- Pickup Date -->
+        <div>
+          <label for="pickupDate" class="block font-semibold mb-1"
+            >Pickup Date</label
+          >
+          <input
+            type="date"
+            id="pickupDate"
+            name="pickupDate"
+            class="border p-2 rounded w-full"
+            required
+          />
+        </div>
+
+        <!-- Return Date -->
+        <div>
+          <label for="returnDate" class="block font-semibold mb-1"
+            >Return Date</label
+          >
+          <input
+            type="date"
+            id="returnDate"
+            name="returnDate"
+            class="border p-2 rounded w-full"
+            required
+          />
+        </div>
+
+        <!-- Total Price -->
+        <div class="text-lg font-bold mt-4">
+          Total Price: <span id="totalPrice">₱0</span>
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
+        >
+          Confirm Booking
+        </button>
+      </form>
+    </main>
+
+    <script>
+      // Sample car data (same as before)
+      const cars = [
+        { id: 1, name: "Toyota Corolla", price_per_day: 50 },
+        { id: 2, name: "Honda Civic", price_per_day: 60 },
+        { id: 3, name: "BMW X5", price_per_day: 120 },
+        { id: 4, name: "Ford Ranger", price_per_day: 80 },
+      ];
+
+      // Get car_id from URL params
+      const params = new URLSearchParams(window.location.search);
+      const carId = parseInt(params.get("car_id"));
+
+      // Find the car
+      const car = cars.find((c) => c.id === carId);
+
+      if (!car) {
+        document.getElementById("carInfo").innerHTML =
+          '<p class="text-red-600">Car not found.</p>';
+        document.getElementById("bookingForm").style.display = "none";
+      } else {
+        document.getElementById("carName").textContent = car.name;
+        document.getElementById(
+          "carPricePerDay"
+        ).textContent = `Price per day: ₱${car.price_per_day}`;
+      }
+
+      // Calculate total price
+      function calculateTotal() {
+        const pickup = document.getElementById("pickupDate").value;
+        const ret = document.getElementById("returnDate").value;
+        if (pickup && ret) {
+          const start = new Date(pickup);
+          const end = new Date(ret);
+          if (end >= start) {
+            const diffTime = end - start;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive days
+            const total = diffDays * car.price_per_day;
+            document.getElementById("totalPrice").textContent = `₱${total}`;
+            return total;
+          }
+        }
+        document.getElementById("totalPrice").textContent = "₱0";
+        return 0;
+      }
+
+      document
+        .getElementById("pickupDate")
+        .addEventListener("change", calculateTotal);
+      document
+        .getElementById("returnDate")
+        .addEventListener("change", calculateTotal);
+
+      // Handle form submit
+      document
+        .getElementById("bookingForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const totalPrice = calculateTotal();
+          if (totalPrice === 0) {
+            alert("Please select valid pickup and return dates.");
+            return;
+          }
+          // Here you will call your backend API to create booking (later step)
+          alert(
+            `Booking confirmed for ${car.name}.\nTotal Price: ₱${totalPrice}`
+          );
+          // Optionally redirect to profile page or home
+          // window.location.href = 'profile.html';
+        });
+    </script>
+  </body>
+</html>

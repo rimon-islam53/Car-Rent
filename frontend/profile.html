@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Profile - AutoRent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+      <div
+        class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <a href="index.html" class="text-2xl font-bold text-blue-600"
+          >AutoRent</a
+        >
+        <div class="hidden md:flex space-x-6">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600"
+            >Home</a
+          >
+          <a href="cars.html" class="text-gray-700 hover:text-blue-600">Cars</a>
+          <a
+            href="#"
+            id="logoutBtn"
+            class="text-gray-700 hover:text-blue-600 cursor-pointer"
+            >Logout</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="max-w-5xl mx-auto px-6 py-10 bg-white rounded-lg shadow-lg mt-10"
+    >
+      <h1 class="text-3xl font-bold mb-8">My Profile</h1>
+
+      <section id="userInfo" class="mb-10">
+        <h2 class="text-2xl font-semibold mb-4">User Information</h2>
+        <p><strong>Name:</strong> <span id="userName">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+      </section>
+
+      <section id="rentalHistory">
+        <h2 class="text-2xl font-semibold mb-4">Rental History</h2>
+        <table
+          class="min-w-full table-auto border-collapse border border-gray-300"
+        >
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border border-gray-300 px-4 py-2 text-left">Car</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">
+                Pickup Date
+              </th>
+              <th class="border border-gray-300 px-4 py-2 text-left">
+                Return Date
+              </th>
+              <th class="border border-gray-300 px-4 py-2 text-left">
+                Total Price
+              </th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <!-- Booking rows go here -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      // Simulated user and booking data (usually fetched from backend with JWT token)
+      const user = {
+        name: "John Doe",
+        email: "user@example.com",
+      };
+
+      const bookings = [
+        {
+          carName: "Toyota Corolla",
+          pickupDate: "2025-08-01",
+          returnDate: "2025-08-05",
+          totalPrice: 250,
+        },
+        {
+          carName: "BMW X5",
+          pickupDate: "2025-07-10",
+          returnDate: "2025-07-12",
+          totalPrice: 360,
+        },
+      ];
+
+      // Check token existence (mock auth)
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first.");
+        window.location.href = "login.html";
+      }
+
+      // Load user info
+      document.getElementById("userName").textContent = user.name;
+      document.getElementById("userEmail").textContent = user.email;
+
+      // Load booking history
+      const tbody = document.getElementById("historyBody");
+      bookings.forEach((booking) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-gray-100";
+        tr.innerHTML = `
+        <td class="border border-gray-300 px-4 py-2">${booking.carName}</td>
+        <td class="border border-gray-300 px-4 py-2">${booking.pickupDate}</td>
+        <td class="border border-gray-300 px-4 py-2">${booking.returnDate}</td>
+        <td class="border border-gray-300 px-4 py-2">₱${booking.totalPrice}</td>
+      `;
+        tbody.appendChild(tr);
+      });
+
+      // Logout button clears token and redirects
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        alert("Logged out successfully.");
+        window.location.href = "login.html";
+      });
+    </script>
+  </body>
+</html>
